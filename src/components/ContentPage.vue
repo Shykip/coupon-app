@@ -5,17 +5,17 @@
 
             <h1 class="text-5xl md:text-6xl lg:text-7xl text-web-dark font-extrabold text-center">My Coupons</h1>
 
-            <div class="flex xl:flex-row flex-col gap-10 lg:justify-between xl:items-center">
-                <p class="text-xl md:text-2xl lg:text-3xl font-bold text-web-grey text-center">We got a surprising discounts for you.</p>
+            <div class="flex w-full xl:flex-row flex-col gap-10 lg:justify-between xl:items-center">
+                <p class="text-xl md:text-2xl lg:text-3xl font-bold text-web-grey text-center md:text-left">We got a surprising discounts for you.</p>
 
                 <div class="flex md:gap-10 text-web-grey text-sm md:text-lg lg:text-xl font-extrabold justify-between  items-center">
-                    <p class="text-web-dark cursor-pointer">ALL</p>
+                    <p class="cursor-pointer" :class="{ 'text-web-dark' : sortBtn.all }" @click="sortData('all')">ALL</p>
                     <div class="bg-web-grey h-5 w-0.5"></div>
-                    <p class="cursor-pointer">FOOD</p>
+                    <p class="cursor-pointer" :class="{ 'text-web-dark' : sortBtn.food }" @click="sortData('food')">FOOD</p>
                     <div class="bg-web-grey h-5 w-0.5"></div>
-                    <p class="cursor-pointer">TRAVEL</p>
+                    <p class="cursor-pointer" :class="{ 'text-web-dark' : sortBtn.travel }" @click="sortData('travel')">TRAVEL</p>
                     <div class="bg-web-grey h-5 w-0.5"></div>
-                    <p class="cursor-pointer">SHOP</p>
+                    <p class="cursor-pointer" :class="{ 'text-web-dark' : sortBtn.shop }" @click="sortData('shop')">SHOP</p>
                 </div>
             </div>
 
@@ -25,7 +25,7 @@
         <div class="card_container flex flex-wrap w-full gap-10 md:gap-13 md:flex-row flex-col items-center">
 
 
-            <div v-for="item in data" class="card p-3 md:p-6 rounded-xl">
+            <div v-for="item in sortedData" class="card p-3 md:p-6 rounded-xl" :id="item.id" @click="redeem(item)">
                 <div class="rounded-full"><img :src="`./${item.img}`" class="w-16"></div>
 
                 <div class="flex flex-col gap-1 md:gap-3 border-l-4 pl-4 ml-4 border-dashed">
@@ -43,15 +43,52 @@
 
 <script>
 export default {
+    methods: {
+        redeem(item) {
+            alert("Here is you redeemed code :\n"+ item.title + "\n" + item.desc + "\n" + item.code)
+        },
+
+        sortData(sortType) {
+
+            if(sortType == "food") {
+
+                this.sortedData = this.data.filter  (item => item.type === "food")
+                this.sortBtn = { all : false, food: true, travel : false, shop : false }
+
+            } else if(sortType == "travel") {
+
+                this.sortedData = this.data.filter  (item => item.type === "travel")
+                this.sortBtn = { all : false, food: false, travel : true, shop : false }
+
+            } else if(sortType == "shop") {
+
+                this.sortedData = this.data.filter  (item => item.type === "shop")
+                this.sortBtn = { all : false, food: false, travel : false, shop : true }
+
+            } else {
+
+                this.sortedData = this.data
+                this.sortBtn = { all : true, food: false, travel : false, shop : false }
+            }
+
+        }
+    },
     data (){
         let data = [
-            { id: 1, title: "STARBUCKS", desc: "BUY GET 1 FREE", vDate: "05 Apr 2023", img: "starbucks.png" },
-            { id: 1, title: "MCDONALDS", desc: "$15 COUPON", vDate: "05 Apr 2023", img: "mcdon.png" },
-            { id: 1, title: "DOMINO'S", desc: "30% Off", vDate: "05 Apr 2023", img: "dominos.png" }
+            { id: 1, title: "STARBUCKS", desc: "BUY GET 1 FREE", vDate: "01 Jan 2024", img: "starbucks.png", type: "food", code: "3A4FXC90A" },
+            { id: 2, title: "MCDONALDS", desc: "$15 COUPON", vDate: "25 Oct 2023", img: "mcdon.png", type: "food", code: "9SDJKJ58J" },
+            { id: 3, title: "DOMINO'S", desc: "30% Off", vDate: "12 Dec 2023", img: "dominos.png", type: "food", code: "783HIJAS7" },
+            { id: 4, title: "NIKE", desc: "10% Off", vDate: "06 Apr 2023", img: "nike.png", type: "shop", code: "SDSFF4A27" },
+            { id: 4, title: "GUCCI", desc: "5% Off", vDate: "19 Feb 2023", img: "gucci.png", type: "shop", code: "AESF2312S" },
+            { id: 4, title: "NORTHFACE", desc: "Rs.3000 discount", vDate: "23 Mar 2023", img: "northface.jpg", type: "shop", code: "LCSDF892H" },
+            { id: 4, title: "NEW BALANCE", desc: "Rs.1000 discount", vDate: "01 Mar 2023", img: "newBal.png", type: "shop", code: "AS82JGFN9" }
         ]
-        return {
-            data
-        }
+
+        let sortedData = data
+
+        let sortBtn = { all : true, food: false, travel : false, shop : false }
+
+        return { data, sortedData, sortBtn }
     }
 }
 </script>
@@ -60,22 +97,6 @@ export default {
 section{
     padding-left: max(30px, 15vw);
     padding-right: max(30px, 15vw);
-
-    ::-webkit-scrollbar {
-        height: 5px;
-        width: 5px;
-    }
-    ::-webkit-scrollbar-track {
-        background: none;
-        
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #595959;
-        border-radius: 100px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #080E14;
-    }
 
     .card_container{
         .card{
